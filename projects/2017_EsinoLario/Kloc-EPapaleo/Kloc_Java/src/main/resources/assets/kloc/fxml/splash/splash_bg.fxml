@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.Double?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Polygon?>
+<?import javafx.scene.shape.Rectangle?>
+
+
+<AnchorPane maxHeight="400.0" maxWidth="600.0" minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e76d0a" height="400.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="600.0" />
+      <Polygon fill="#0f6bac" layoutX="550.0" layoutY="360.0" scaleX="4.0" scaleY="6.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" translateX="-75.0" translateY="-50.0">
+        <points>
+          <Double fx:value="-50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="0.0" />
+          <Double fx:value="-60.0" />
+        </points>
+         <effect>
+            <DropShadow height="1.0" radius="0.0" width="1.0" />
+         </effect>
+      </Polygon>
+      <Polygon fill="#1182c6" layoutX="550.0" layoutY="360.0" scaleX="5.0" scaleY="3.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" translateY="-40.0">
+        <points>
+          <Double fx:value="-50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="0.0" />
+          <Double fx:value="-60.0" />
+        </points>
+         <effect>
+            <DropShadow height="2.0" radius="0.5" width="2.0" />
+         </effect>
+      </Polygon>
+      <Polygon fill="#f4a212" layoutX="56.0" layoutY="60.0" rotate="180.0" scaleX="8.0" scaleY="40.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" translateX="134.0">
+        <points>
+          <Double fx:value="-50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="0.0" />
+          <Double fx:value="-60.0" />
+        </points>
+         <effect>
+            <DropShadow height="3.0" radius="1.0" width="3.0" />
+         </effect>
+      </Polygon>
+      <Polygon fill="#f16220" layoutX="50.0" layoutY="60.0" scaleX="7.0" scaleY="8.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" translateX="-20.0">
+        <points>
+          <Double fx:value="-50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="0.0" />
+          <Double fx:value="-60.0" />
+        </points>
+         <effect>
+            <DropShadow height="4.0" radius="1.5" width="4.0" />
+         </effect>
+      </Polygon>
+      <Polygon fill="#1398dd" layoutX="537.0" layoutY="64.0" rotate="-90.0" scaleX="8.0" scaleY="5.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" translateX="-120.0" translateY="-120.0">
+        <points>
+          <Double fx:value="-50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="50.0" />
+          <Double fx:value="40.0" />
+          <Double fx:value="0.0" />
+          <Double fx:value="-60.0" />
+        </points>
+         <effect>
+            <DropShadow height="5.0" radius="2.0" width="5.0" />
+         </effect>
+      </Polygon>
+   </children>
+</AnchorPane>

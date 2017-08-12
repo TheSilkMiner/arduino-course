@@ -1,0 +1,41 @@
+.jfx-progress-bar > .track, .jfx-progress-bar > .bar {
+	-fx-background-radius: 0;
+	-fx-background-insets: 0;
+}
+
+.jfx-progress-bar > .bar {
+	-fx-background-color: rgba(99, 226, 99, 0.8);
+	-fx-background-radius: 3px;
+	/*-fx-background-color: linear-gradient(to right, rgba(32, 45, 203, 0.8), rgba(203, 45, 32, 0.8));*/
+}
+
+.jfx-progress-bar > .track {
+	/*-fx-background-color: rgba(32, 45, 203, 0);*/
+	-fx-background-color: linear-gradient(to right, rgba(32, 45, 203, 0.5) 45%, rgba(79, 24, 79, 0.5) 55%, rgba(203, 45, 32, 0.5) 65%);
+}
+
+.-kloc-splash-loading_text {
+	-fx-fill: rgba(0, 0, 0, 0.8);
+	-fx-font-size: 16;
+	-fx-font-weight: bold;
+}
+
+.-kloc-splash-left_text {
+	-fx-fill: rgba(255, 255, 255, 0.75);
+	-fx-font-weight: bold;
+	-fx-font-size: 20;
+}
+
+.-kloc-splash-big_text {
+	-fx-font-size: 72;
+}
+
+.-kloc-splash-right_text {
+	-fx-fill: rgba(255, 255, 255, 0.8);
+	-fx-font-size: 20;
+}
+
+.-kloc-splash-bolded_right_text {
+	-fx-font-weight: bold;
+}
+

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.thesilkminer.arduino.kloc.ui.splash.SplashFgController">
+   <bottom>
+      <VBox alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text fx:id="loadingText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="-kloc-splash-loading_text" text="CODE: LYOKO">
+               <VBox.margin>
+                  <Insets bottom="3.0" left="6.0" right="6.0" top="6.0" />
+               </VBox.margin>
+            </Text>
+            <JFXProgressBar fx:id="progressBar" prefHeight="8.0" prefWidth="600.0" />
+         </children>
+      </VBox>
+   </bottom>
+   <left>
+      <VBox alignment="CENTER_LEFT" prefHeight="360.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="KloC">
+               <styleClass>
+                  <String fx:value="-kloc-splash-big_text" />
+                  <String fx:value="-kloc-splash-left_text" />
+               </styleClass>
+               <VBox.margin>
+                  <Insets left="20.0" top="60.0" />
+               </VBox.margin>
+            </Text>
+         </children>
+      </VBox>
+   </left>
+   <right>
+      <VBox alignment="TOP_RIGHT" prefHeight="360.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="-kloc-splash-right_text" text="Why counting forwards when you">
+               <VBox.margin>
+                  <Insets right="14.0" top="12.0" />
+               </VBox.margin>
+            </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="can do it BACKWARDS?">
+               <VBox.margin>
+                  <Insets right="14.0" />
+               </VBox.margin>
+               <styleClass>
+                  <String fx:value="-kloc-splash-right_text" />
+                  <String fx:value="-kloc-splash-bolded_right_text" />
+               </styleClass>
+            </Text>
+         </children>
+      </VBox>
+   </right>
+   <stylesheets>
+      <URL value="@../../stylesheets/main.css" />
+      <URL value="@../../stylesheets/splash.css" />
+   </stylesheets>
+</BorderPane>
