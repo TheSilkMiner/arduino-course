@@ -25,6 +25,12 @@ plugins {
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'findbugs'
 
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -56,11 +62,17 @@ dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version: '15.0'
     shade group: 'org.jetbrains', name: 'annotations', version: '15.0'
 
-    /*
-    // jRxTx
-    compile (group: 'org.openmuc', name: 'jrxtx', version: '1.0.0')
-    shade (group: 'org.openmuc', name: 'jrxtx', version: '1.0.0')
-    */
+    // SLF4J Api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-alpha2'
+    shade group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-alpha2'
+
+    // Apache Log4j
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    shade group: 'log4j', name: 'log4j', version: '1.2.17'
+
+    // SLF4J Log4j 12 Binding
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.8.0-alpha2'
+    shade group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.8.0-alpha2'
 
     // JBiDiB RxTx 2
     compile group: 'org.bidib.jbidib', name: 'jbidibc-rxtx-2.2', version: '1.6.0'

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//log4j/log4j Configuration//EN" "log4j.dtd">
+
+<!--suppress XmlDefaultAttributeValue -->
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{hh:mm:ss aaa}] [%t/%p]: %m%n" />
+        </layout>
+    </appender>
+    <appender name="FileAppender" class="org.apache.log4j.custom.MultipleFilesAppender">
+        <param name="File" value="logs/app.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{hh:mm:ss aaa}] [%t/%p]: %m%n" />
+        </layout>
+    </appender>
+    <root>
+        <priority value="DEBUG" />
+        <appender-ref ref="ConsoleAppender" />
+        <appender-ref ref="FileAppender" />
+    </root>
+</log4j:configuration>
