@@ -20,6 +20,7 @@ plugins {
     id 'visual-studio' // I don't know who's the madman that may use this as their IDE instead of Idea, but... okay
     id 'maven'
     id 'com.github.ben-manes.versions' version '0.15.0'
+    id 'com.github.hierynomus.license' version '0.14.0'
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -28,6 +29,28 @@ apply plugin: 'findbugs'
 idea {
     module {
         inheritOutputDirs = true
+    }
+}
+
+//noinspection GrUnresolvedAccess
+license {
+    //noinspection GrUnresolvedAccess
+    header file('COPYING')
+    //noinspection GrUnresolvedAccess
+    include '**/*.java'
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+    ext.name = 'TheSilkMiner'
+    ext.email = 'thesilkminer <at> outlook <dot> com'
+    ext.app = 'KloC - Java Companion App'
+
+    //noinspection GrUnresolvedAccess
+    strictCheck true
+    //noinspection GrUnresolvedAccess
+    ignoreFailures false
+
+    //noinspection GrUnresolvedAccess
+    mapping {
+        java='SLASHSTAR_STYLE'
     }
 }
 
@@ -144,6 +167,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
 build.dependsOn shadowJar
+//noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
+compileJava.dependsOn licenseMain
+//noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
+licenseMain.dependsOn licenseFormatMain
 
 artifacts {
     archives sourcesJar
