@@ -144,6 +144,7 @@ public final class Scheduler {
      * @since 1.0
      */
     @Nonnull
+    @SuppressWarnings("UnusedReturnValue")
     public List<Runnable> shutdownSchedulerImmediately() {
         return this.shutdownScheduler(true);
     }
@@ -154,10 +155,19 @@ public final class Scheduler {
         this.lock.lock();
         try {
             LOGGER.info("Attempting to shut down scheduler");
-            if (rightNow) return this.scheduler.shutdownNow();
-            else this.scheduler.shutdown();
+            LOGGER.trace("Request to be performed {}", rightNow? "now" : "as soon as possible");
+
+            if (rightNow) {
+                LOGGER.warn("Shutting down threads forcefully: this may lead to errors!");
+                final List<Runnable> list = this.scheduler.shutdownNow();
+                LOGGER.warn("Tasks still to execute: {}", list);
+                return list;
+            }
+
+            this.scheduler.shutdown();
             return null;
         } finally {
+            LOGGER.error("FATAL: Scheduler shut down");
             this.lock.unlock();
         }
     }

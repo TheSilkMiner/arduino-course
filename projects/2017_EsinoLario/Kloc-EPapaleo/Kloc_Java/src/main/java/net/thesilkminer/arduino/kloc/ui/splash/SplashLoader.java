@@ -69,6 +69,8 @@ public enum SplashLoader {
     }
 
     public void updateProgressBar(final int progress, final String text) {
+        // Very very bad, relying on internal implementation
+        // FIXME Try to make this thing fuck off
         if (com.sun.javafx.tk.Toolkit.getToolkit().isFxUserThread()) this.updateProgressBar0(progress, text);
         else Platform.runLater(() -> this.updateProgressBar0(progress, text));
     }

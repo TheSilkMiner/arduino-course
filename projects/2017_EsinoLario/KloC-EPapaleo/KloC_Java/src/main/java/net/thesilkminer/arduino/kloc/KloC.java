@@ -130,23 +130,25 @@ public class KloC extends Application {
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm:ss a")));
 
         LOGGER.info("Pre-init: Setting crash handler");
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            final Thread h = new Thread(() -> {
-                LOGGER.error(net.thesilkminer.arduino.kloc.crash.CrashReport.from(e, t).toString());
-                javafx.application.Platform.exit();
-                System.exit(1);
-            });
-            h.setName("Crash Handler Thread");
-            h.start();
-        }); // TODO REAL handler
+        Thread.setDefaultUncaughtExceptionHandler(KloC::uncaughtExceptionHandler);
+
+        LOGGER.info("Pre-init: checking Java version");
+        try {
+            checkForJava9();
+        } catch (final Throwable t) {
+            // Force creation of a crash report
+            uncaughtExceptionHandler(Thread.currentThread(), t);
+            return;
+        }
+
         LOGGER.info("Pre-init: loading fonts");
         loadFonts();
         LOGGER.debug("Fonts loaded. Testing availability");
         LOGGER.debug("Roboto Regular: {}; Bold: {}; Thin: {}", Font.font("Roboto"),
-                Font.font("Roboto", FontWeight.BOLD, 12), Font.font("Roboto", FontWeight.THIN, -1));
+                Font.font("Roboto", FontWeight.BOLD, 12), Font.font("Roboto Thin", FontWeight.THIN, -1));
         LOGGER.debug("Material Icons: {}", Font.font("Material Icons"));
         LOGGER.debug("Roboto Slab Regular: {}; Thin: {}",
-                Font.font("Roboto Slab"), Font.font("Roboto Slab", FontWeight.THIN, -1));
+                Font.font("Roboto Slab"), Font.font("Roboto Slab Thin", FontWeight.THIN, -1));
 
         final Thread startup = new Thread(() -> {
             LOGGER.info("Pre-init: Launching JavaFX app with arguments {}", (Object) args);
@@ -163,7 +165,6 @@ public class KloC extends Application {
     private static void loadFonts() {
         final Class<KloC> clazz = KloC.class;
         final int size = -1;
-        // FIXME Some fonts not loading (e.g. Thin versions)
         // Low priority: as long as Roboto Regular, Roboto Slab Regular and Material Icons Regular are loaded that's fine
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Material Icons/MaterialIcons-Regular.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-Black.ttf")), size);
@@ -182,6 +183,27 @@ public class KloC extends Application {
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Slab/RobotoSlab-Light.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Slab/RobotoSlab-Thin.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Slab/RobotoSlab-Regular.ttf")), size);
+    }
+
+    private static void checkForJava9() {
+        final boolean isJava9 = System.getProperty("java.version").startsWith("9");
+        if (isJava9) {
+            LOGGER.error("FATAL: Java 9 identified. This is unsupported!");
+            throw new UnsupportedClassVersionError("Java 9 is not currently supported");
+        }
+        LOGGER.info("Currently not running under Java 9: that's fine");
+    }
+
+    // TODO Real handler
+    @SuppressWarnings("deprecation")
+    private static void uncaughtExceptionHandler(final Thread t, final Throwable e) {
+        final Thread h = new Thread(() -> {
+            LOGGER.error(net.thesilkminer.arduino.kloc.crash.CrashReport.from(e, t).toString());
+            javafx.application.Platform.exit();
+            net.thesilkminer.arduino.kloc.util.Scheduler.getInstance().shutdownSchedulerImmediately();
+        });
+        h.setName("Crash Handler Thread");
+        h.start();
     }
 
     @Contract(value = "_ -> !null", pure = true)

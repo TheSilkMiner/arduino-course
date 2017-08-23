@@ -28,7 +28,7 @@ public enum InitHandler {
         Scheduler.getInstance().scheduleTask(() -> {
             SplashLoader.IT.updateProgressBar(-1, "Preparing application...");
             Scheduler.getInstance().scheduleTask(() -> {
-                // TODO
+                net.thesilkminer.arduino.kloc.util.WorkerThread.INSTANCE.offer(() -> {throw new RuntimeException();});// TODO
             }, 4500);
         }, 5, TimeUnit.SECONDS);
     }
