@@ -22,6 +22,8 @@ package net.thesilkminer.arduino.kloc.util;
 
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,14 +44,20 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author TheSilkMiner
  * @since 1.0
  */
-// TODO Support concurrent scheduled tasks (will it work?)
 // TODO Add #scheduleTaskAfterPrevious(Runnable, long, TimeUnit)void
+// TODO Add #scheduleFxTask(Runnable, long, TimeUnit)void
 @ThreadSafe
 public final class Scheduler {
 
     private static final class SchedulerHelper {
+        static {
+            LOGGER.trace("Scheduler first time loading: constructing thread-safe singleton instance");
+        }
+
         private static final Scheduler SCHEDULER = new Scheduler();
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Scheduler.class);
 
     private final ScheduledExecutorService scheduler;
     private final ReentrantLock lock;
@@ -59,6 +67,14 @@ public final class Scheduler {
         this.lock = new ReentrantLock();
     }
 
+    /**
+     * Gets the unique Scheduler instance.
+     *
+     * @return
+     *      The unique Scheduler instance.
+     *
+     * @since 1.0
+     */
     @Contract(pure = true)
     @Nonnull
     public static synchronized Scheduler getInstance() {
@@ -97,6 +113,7 @@ public final class Scheduler {
         this.lock.lock();
         try {
             this.scheduler.schedule(task, delay, timeUnit);
+            LOGGER.trace("Scheduled task {} to be executed in {} {}", task, delay, timeUnit);
         } finally {
             this.lock.unlock();
         }
@@ -136,6 +153,7 @@ public final class Scheduler {
     private List<Runnable> shutdownScheduler(final boolean rightNow) {
         this.lock.lock();
         try {
+            LOGGER.info("Attempting to shut down scheduler");
             if (rightNow) return this.scheduler.shutdownNow();
             else this.scheduler.shutdown();
             return null;

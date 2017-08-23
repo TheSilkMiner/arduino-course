@@ -29,6 +29,8 @@ import javafx.scene.layout.Pane;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -59,6 +61,7 @@ import java.util.ResourceBundle;
 public final class GenericLoader {
 
     private static final Map<Pair<String, Boolean>, GenericLoader> CACHE = Maps.newHashMap();
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericLoader.class);
 
     private final String fxmlName;
     private final URL fxmlUrl;
@@ -72,6 +75,9 @@ public final class GenericLoader {
         this.needsMaterialIcons = needsMaterialIcons;
         //noinspection SpellCheckingInspection
         this.fxmlUrl = this.getClass().getResource("/assets/kloc/fxml/" + this.fxmlName);
+
+        LOGGER.info("Constructed new loader pointing to '{}'", this.fxmlUrl.toString());
+        LOGGER.trace("Given name: {}; should resolve MDI? {}", fxmlName, needsMaterialIcons);
 
         this.node = null;
         this.controller = null;
@@ -257,15 +263,19 @@ public final class GenericLoader {
     }
 
     private void load0() throws IOException {
+        LOGGER.info("Loading FXML file '{}'", this.fxmlName);
         final FXMLLoader loader = new FXMLLoader();
         loader.setLocation(this.fxmlUrl);
         if (this.needsMaterialIcons) {
             //noinspection SpellCheckingInspection
             loader.setResources(ResourceBundle.getBundle("assets.kloc.fonts.Material Icons.Material_Icons"));
+            LOGGER.trace("Allow MDI resolution");
         }
         final Object container = loader.load();
         if (container instanceof Pane) ((Pane) container).setBackground(Background.EMPTY);
         this.node = container;
         this.controller = loader.getController();
+        LOGGER.debug("Obtained node: {} ({}); obtained controller: {} ({})", container, container.getClass().getCanonicalName(),
+                this.controller, this.controller == null? null : this.controller.getClass().getCanonicalName());
     }
 }
