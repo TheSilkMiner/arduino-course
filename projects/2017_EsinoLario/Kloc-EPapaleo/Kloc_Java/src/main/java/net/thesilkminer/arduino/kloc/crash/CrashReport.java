@@ -139,7 +139,7 @@ public final class CrashReport {
         builder.append("\n -- Thread statuses --\n");
         Thread.getAllStackTraces().forEach((k, v) -> {
             builder.append("    - ").append(k.getName()).append('\n');
-            Arrays.stream(v).forEach(it -> builder.append("        ").append(it).append('\n'));
+            Arrays.stream(v).forEach(it -> builder.append("        at ").append(it).append('\n'));
         });
         builder.append("\nException thread: ").append(this.thread);
         builder.append("\nCurrent thread: ").append(Thread.currentThread().toString()).append('\n');

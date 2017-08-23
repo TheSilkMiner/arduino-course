@@ -24,6 +24,7 @@ import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import net.thesilkminer.arduino.kloc.util.WorkerThread;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,9 +101,20 @@ public class KloC extends Application {
     @Override
     public void start(final Stage primaryStage) throws Exception {
         LOGGER.info("Pre-init: loading splash screen");
-        net.thesilkminer.arduino.kloc.ui.splash.SplashLoader.IT.load();
+        InitHandler.HANDLER.createSplash();
         LOGGER.info("Pre-init loading completed. Moving to init phase");
-        //javafx.application.Platform.exit();
+
+        LOGGER.info("App Initialization starting");
+        LOGGER.trace("Deferring control to {}", InitHandler.class.getCanonicalName());
+        InitHandler.HANDLER.initApp();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        LOGGER.info("Application exit requested: performing cleanup");
+        // TODO Cleanup
+        // TODO Save preferences
+        LOGGER.error("FATAL: Application terminated");
     }
 
     public static void main(final String... args) {
@@ -142,6 +154,10 @@ public class KloC extends Application {
         });
         startup.setName("JavaFX Application Startup Thread");
         startup.start();
+
+        final Thread worker = new Thread(WorkerThread.INSTANCE);
+        worker.setName("Worker Thread");
+        worker.start();
     }
 
     private static void loadFonts() {
