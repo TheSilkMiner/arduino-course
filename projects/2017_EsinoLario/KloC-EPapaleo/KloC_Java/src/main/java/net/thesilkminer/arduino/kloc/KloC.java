@@ -195,7 +195,6 @@ public class KloC extends Application {
     }
 
     // TODO Real handler
-    @SuppressWarnings("deprecation")
     private static void uncaughtExceptionHandler(final Thread t, final Throwable e) {
         final Thread h = new Thread(() -> {
             LOGGER.error(net.thesilkminer.arduino.kloc.crash.CrashReport.from(e, t).toString());

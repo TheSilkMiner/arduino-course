@@ -167,8 +167,11 @@ public final class Scheduler {
             this.scheduler.shutdown();
             return null;
         } finally {
-            LOGGER.error("FATAL: Scheduler shut down");
-            this.lock.unlock();
+            try {
+                LOGGER.error("FATAL: Scheduler shut down");
+            } finally {
+                this.lock.unlock();
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ buildscript {
     dependencies {
         classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow', version: '1.2.3'
         classpath group: 'net.thesilkminer.gradle.translationchecker', name: 'TranslationChecker', version: '1.1'
+        classpath group: 'com.autoscout24.gradle', name: 'gradle-todo-plugin', version: '1.0'
     }
 }
 
@@ -25,6 +26,7 @@ plugins {
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'findbugs'
+apply plugin: 'com.autoscout24.gradle.todo'
 
 idea {
     module {
@@ -51,6 +53,19 @@ license {
     //noinspection GrUnresolvedAccess
     mapping {
         java='SLASHSTAR_STYLE'
+    }
+}
+
+//noinspection GrUnresolvedAccess
+todo {
+    todoPattern = '\\/(\\/|\\*)(( )|())[\\\\t\\\\s]*(TODO|FIXME)(.*)'
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+        html.stylesheet project.resources.text.fromFile("findbugs/stylesheet.xsl")
     }
 }
 
@@ -171,6 +186,9 @@ build.dependsOn shadowJar
 compileJava.dependsOn licenseMain
 //noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
 licenseMain.dependsOn licenseFormatMain
+//noinspection GrUnresolvedAccess,GroovyAssignabilityCheck
+compileJava.dependsOn checkTodo
+build.dependsOn check
 
 artifacts {
     archives sourcesJar
