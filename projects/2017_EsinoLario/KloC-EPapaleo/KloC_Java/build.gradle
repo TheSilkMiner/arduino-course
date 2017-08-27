@@ -124,6 +124,10 @@ dependencies {
     compile group: 'com.jfoenix', name: 'jfoenix', version: '1.7.0'
     shade group: 'com.jfoenix', name: 'jfoenix', version: '1.7.0'
 
+    // IntelliJ Forms
+    compile group: 'com.github.adedayo.intellij.sdk', name: 'forms_rt', version: '142.1'
+    shade group: 'com.github.adedayo.intellij.sdk', name: 'forms_rt', version: '142.1'
+
     // JUnit
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

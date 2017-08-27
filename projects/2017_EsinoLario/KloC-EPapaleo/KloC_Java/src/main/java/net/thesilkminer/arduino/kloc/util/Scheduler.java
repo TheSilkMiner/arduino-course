@@ -21,6 +21,7 @@
 package net.thesilkminer.arduino.kloc.util;
 
 import com.google.common.base.Preconditions;
+import net.thesilkminer.arduino.kloc.crash.ReportedException;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +113,20 @@ public final class Scheduler {
         Preconditions.checkNotNull(timeUnit, "timeUnit must not be null: use #scheduleTask(Runnable, long) instead");
         this.lock.lock();
         try {
-            this.scheduler.schedule(task, delay, timeUnit);
+            /*
+             * We don't schedule the task directly so that, if executions throws an
+             * exception, then the entire application crashes away, instead of
+             * continuing in an illegal state.
+             */
+            this.scheduler.schedule(() -> {
+                try {
+                    task.run();
+                } catch (final Throwable t) {
+                    WorkerThread.INSTANCE.offer(() -> {
+                        throw new ReportedException("An error occurred while executing scheduled task " + task.toString(), t);
+                    });
+                }
+            }, delay, timeUnit);
             LOGGER.trace("Scheduled task {} to be executed in {} {}", task, delay, timeUnit);
         } finally {
             this.lock.unlock();

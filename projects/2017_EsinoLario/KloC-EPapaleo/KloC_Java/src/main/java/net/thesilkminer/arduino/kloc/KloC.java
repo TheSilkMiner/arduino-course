@@ -24,6 +24,8 @@ import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import net.thesilkminer.arduino.kloc.crash.CrashHandler;
+import net.thesilkminer.arduino.kloc.crash.ReportedException;
 import net.thesilkminer.arduino.kloc.util.WorkerThread;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -31,6 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.swing.*;
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -88,9 +92,13 @@ public class KloC extends Application {
         }
     }
 
+    private static final boolean MOCK_JAVA_9_FOR_TESTING_PURPOSES_MUST_BE_FALSE = false;
+
     static {
         System.setProperty("slf4j.detectLoggerNameMismatch", "true");
         System.setProperty("log4j.debug", "true");
+
+        if (MOCK_JAVA_9_FOR_TESTING_PURPOSES_MUST_BE_FALSE) System.setProperty("java.version", "9");
     }
 
     public static final String NAME = "KloC Java Companion App";
@@ -129,8 +137,34 @@ public class KloC extends Application {
         LOGGER.debug("PRESENT DAY, PRESENT TIME! HA HA HA HA! ({})",
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("MMM dd, yyyy hh:mm:ss a")));
 
-        LOGGER.info("Pre-init: Setting crash handler");
+        LOGGER.info("Pre-init: setting crash handler");
         Thread.setDefaultUncaughtExceptionHandler(KloC::uncaughtExceptionHandler);
+
+        LOGGER.info("Pre-init: initializing Java Swing layer");
+        LOGGER.trace("Applying Black-Nimbus theme");
+
+        try {
+            final String className = Arrays.stream(UIManager.getInstalledLookAndFeels())
+                    .filter(it -> "Nimbus".equalsIgnoreCase(it.getName()))
+                    .findAny()
+                    .map(UIManager.LookAndFeelInfo::getClassName)
+                    .orElseThrow(() -> new ReportedException("Unable to apply Swing Look and Feel"));
+            UIManager.setLookAndFeel(className);
+
+            final Color base = new Color(40, 40, 40);
+            UIManager.put("control", base);
+            UIManager.put("text", base.brighter().brighter().brighter().brighter().brighter());
+            UIManager.put("nimbusBase", new Color(0, 0, 0));
+            UIManager.put("nimbusFocus", base);
+            UIManager.put("nimbusBorder", base);
+            UIManager.put("nimbusLightBackground", base);
+            UIManager.put("info", base.brighter().brighter());
+            UIManager.put("nimbusSelectionBackground", base.brighter().brighter());
+        } catch (final ReflectiveOperationException | UnsupportedLookAndFeelException | ReportedException e) {
+            // Force creation of a crash report
+            uncaughtExceptionHandler(Thread.currentThread(), e);
+            return;
+        }
 
         LOGGER.info("Pre-init: checking Java version");
         try {
@@ -142,13 +176,27 @@ public class KloC extends Application {
         }
 
         LOGGER.info("Pre-init: loading fonts");
-        loadFonts();
+        try {
+            loadFonts();
+        } catch (final Throwable t) {
+            // Force creation of a crash report
+            uncaughtExceptionHandler(Thread.currentThread(), new ReportedException("Unable to load fonts needed", t));
+            return;
+        }
         LOGGER.debug("Fonts loaded. Testing availability");
         LOGGER.debug("Roboto Regular: {}; Bold: {}; Thin: {}", Font.font("Roboto"),
                 Font.font("Roboto", FontWeight.BOLD, 12), Font.font("Roboto Thin", FontWeight.THIN, -1));
         LOGGER.debug("Material Icons: {}", Font.font("Material Icons"));
         LOGGER.debug("Roboto Slab Regular: {}; Thin: {}",
                 Font.font("Roboto Slab"), Font.font("Roboto Slab Thin", FontWeight.THIN, -1));
+
+        try {
+            net.thesilkminer.arduino.kloc.crash.CrashFrame.hasNimbus = true;
+        } catch (final Throwable t) {
+            // Force creation of a crash report
+            uncaughtExceptionHandler(Thread.currentThread(), new ReportedException("Unable to configure Nimbus Look and Feel", t));
+            return;
+        }
 
         final Thread startup = new Thread(() -> {
             LOGGER.info("Pre-init: Launching JavaFX app with arguments {}", (Object) args);
@@ -162,10 +210,10 @@ public class KloC extends Application {
         worker.start();
     }
 
-    private static void loadFonts() {
+    private static void loadFonts() throws Throwable {
         final Class<KloC> clazz = KloC.class;
         final int size = -1;
-        // Low priority: as long as Roboto Regular, Roboto Slab Regular and Material Icons Regular are loaded that's fine
+
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Material Icons/MaterialIcons-Regular.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-Black.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-BlackItalic.ttf")), size);
@@ -194,13 +242,8 @@ public class KloC extends Application {
         LOGGER.info("Currently not running under Java 9: that's fine");
     }
 
-    // TODO Real handler
     private static void uncaughtExceptionHandler(final Thread t, final Throwable e) {
-        final Thread h = new Thread(() -> {
-            LOGGER.error(net.thesilkminer.arduino.kloc.crash.CrashReport.from(e, t).toString());
-            javafx.application.Platform.exit();
-            net.thesilkminer.arduino.kloc.util.Scheduler.getInstance().shutdownSchedulerImmediately();
-        });
+        final Thread h = new Thread(() -> CrashHandler.handle(t, e));
         h.setName("Crash Handler Thread");
         h.start();
     }

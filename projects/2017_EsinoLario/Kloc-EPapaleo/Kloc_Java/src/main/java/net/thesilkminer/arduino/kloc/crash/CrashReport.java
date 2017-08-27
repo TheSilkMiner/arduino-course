@@ -76,6 +76,7 @@ public final class CrashReport {
     }
 
     @Nonnull
+    @SuppressWarnings("WeakerAccess")
     public static CrashReport from(@Nonnull final Throwable throwable, @Nullable final Thread thread) {
         return new CrashReport(Preconditions.checkNotNull(throwable), thread,
                 throwable instanceof ReportedException? ((ReportedException) throwable).getDescription() : null);
@@ -109,7 +110,7 @@ public final class CrashReport {
      * @return
      *      If the addition was successful.
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("WeakerAccess") // Whatever
     public final boolean registerCustomCategory(@Nonnull final CrashReportCategory category) {
         return this.categories.add(Preconditions.checkNotNull(category));
     }
@@ -135,12 +136,14 @@ public final class CrashReport {
         //noinspection SpellCheckingInspection
         builder.append("The text below refers to the exact state in which the object was when KloC went kaputt.\n\n");
         builder.append(" -- Stacktrace --\n");
-        this.printStackTrace(this.throwable instanceof ReportedException? this.throwable.getCause() : this.throwable, builder);
+        this.printReportedExceptionStacktrace(this.throwable, builder);
         builder.append("\n -- Thread statuses --\n");
-        Thread.getAllStackTraces().forEach((k, v) -> {
-            builder.append("    - ").append(k.getName()).append('\n');
-            Arrays.stream(v).forEach(it -> builder.append("        at ").append(it).append('\n'));
-        });
+        Thread.getAllStackTraces().entrySet().stream()
+                .sorted((a, b) -> a.getKey().getName().compareToIgnoreCase(b.getKey().getName()))
+                .forEach(e -> {
+                    builder.append("    - ").append(e.getKey().getName()).append('\n');
+                    Arrays.stream(e.getValue()).forEach(it -> builder.append("        at ").append(it).append('\n'));
+                });
         builder.append("\nException thread: ").append(this.thread);
         builder.append("\nCurrent thread: ").append(Thread.currentThread().toString()).append('\n');
         this.categories.forEach(it -> {
@@ -216,5 +219,12 @@ public final class CrashReport {
                 this.printEnclosedStackTrace(t, b, r, "Suppressed: ", p + "    ", s));
 
         if (Objects.nonNull(t.getCause())) this.printEnclosedStackTrace(t.getCause(), b, r, "Caused by: ", p, s);
+    }
+
+    private void printReportedExceptionStacktrace(final Throwable t, final StringBuilder b) {
+        Throwable o = t;
+        while (o instanceof ReportedException && o.getCause() != null) o = o.getCause();
+
+        this.printStackTrace(o, b);
     }
 }
