@@ -123,9 +123,13 @@ class CrashFrameErrorDialog extends JDialog {
         panel2.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel1.add(panel2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         okButton = new JButton();
+        Font okButtonFont = this.$$$getFont$$$("Roboto", -1, -1, okButton.getFont());
+        if (okButtonFont != null) okButton.setFont(okButtonFont);
         okButton.setText("OK");
         panel2.add(okButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         showStackTraceButton = new JButton();
+        Font showStackTraceButtonFont = this.$$$getFont$$$("Roboto", -1, -1, showStackTraceButton.getFont());
+        if (showStackTraceButtonFont != null) showStackTraceButton.setFont(showStackTraceButtonFont);
         showStackTraceButton.setText("Show Stacktrace");
         panel2.add(showStackTraceButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
@@ -142,6 +146,8 @@ class CrashFrameErrorDialog extends JDialog {
         panel5.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel3.add(panel5, new GridConstraints(0, 1, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         errorTextLabel = new JLabel();
+        Font errorTextLabelFont = this.$$$getFont$$$("Roboto", -1, -1, errorTextLabel.getFont());
+        if (errorTextLabelFont != null) errorTextLabel.setFont(errorTextLabelFont);
         errorTextLabel.setText("$var$");
         panel5.add(errorTextLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();

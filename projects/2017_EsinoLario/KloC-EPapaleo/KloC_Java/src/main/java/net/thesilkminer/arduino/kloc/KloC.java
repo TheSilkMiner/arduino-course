@@ -189,6 +189,8 @@ public class KloC extends Application {
         LOGGER.debug("Material Icons: {}", Font.font("Material Icons"));
         LOGGER.debug("Roboto Slab Regular: {}; Thin: {}",
                 Font.font("Roboto Slab"), Font.font("Roboto Slab Thin", FontWeight.THIN, -1));
+        LOGGER.debug("Roboto Mono Regular: {}, Medium: {}",
+                Font.font("Roboto Mono"), Font.font("Roboto Mono Medium", FontWeight.MEDIUM, -1));
 
         try {
             net.thesilkminer.arduino.kloc.crash.CrashFrame.hasNimbus = true;
@@ -214,7 +216,10 @@ public class KloC extends Application {
         final Class<KloC> clazz = KloC.class;
         final int size = -1;
 
+        // Material Icons
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Material Icons/MaterialIcons-Regular.ttf")), size);
+
+        // Roboto
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-Black.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-BlackItalic.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-Bold.ttf")), size);
@@ -227,10 +232,24 @@ public class KloC extends Application {
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-Regular.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-Thin.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto/Roboto-ThinItalic.ttf")), size);
+
+        // Roboto Slab
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Slab/RobotoSlab-Bold.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Slab/RobotoSlab-Light.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Slab/RobotoSlab-Thin.ttf")), size);
         Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Slab/RobotoSlab-Regular.ttf")), size);
+
+        // Roboto Mono
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-Bold.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-BoldItalic.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-Italic.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-Light.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-LightItalic.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-Medium.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-MediumItalic.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-Regular.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-Thin.ttf")), size);
+        Font.loadFont(clazz.getResourceAsStream(toFontAsset("Roboto Mono/RobotoMono-ThinItalic.ttf")), size);
     }
 
     private static void checkForJava9() {

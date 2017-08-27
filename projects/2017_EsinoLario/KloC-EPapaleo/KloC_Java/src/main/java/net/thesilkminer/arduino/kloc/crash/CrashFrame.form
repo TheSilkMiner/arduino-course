@@ -83,7 +83,7 @@
                 <constraints/>
                 <properties>
                   <editable value="false"/>
-                  <font name="Consolas"/>
+                  <font name="Roboto Mono"/>
                   <lineWrap value="false"/>
                   <margin top="10" left="10" bottom="10" right="10"/>
                   <selectionColor color="-14145496"/>

@@ -118,7 +118,8 @@ public final class CrashFrame extends JFrame {
 
         this.supportButton.addActionListener(e -> {
             try {
-                this.connectTo("https://github.com/arduino-course/issues/new");
+                //noinspection SpellCheckingInspection
+                this.connectTo("https://github.com/ixd-plus/arduino-course/issues/new");
             } catch (final URISyntaxException | IOException t) {
                 final JDialog v = new CrashFrameErrorDialog("opening support website", t, this);
                 v.toFront();
@@ -280,7 +281,7 @@ public final class CrashFrame extends JFrame {
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-4473925)), null));
         crashReportArea = new JTextArea();
         crashReportArea.setEditable(false);
-        Font crashReportAreaFont = this.$$$getFont$$$("Consolas", -1, -1, crashReportArea.getFont());
+        Font crashReportAreaFont = this.$$$getFont$$$("Roboto Mono", -1, -1, crashReportArea.getFont());
         if (crashReportAreaFont != null) crashReportArea.setFont(crashReportAreaFont);
         crashReportArea.setLineWrap(false);
         crashReportArea.setMargin(new Insets(10, 10, 10, 10));
