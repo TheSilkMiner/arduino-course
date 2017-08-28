@@ -3,3 +3,14 @@
     -fx-font-size: 14;
 }
 
+.-kloc-generic-title_text {
+	-fx-font-family: "Roboto Slab";
+}
+
+.-kloc-generic-monospaced_text {
+	-fx-font-family: "Roboto Mono";
+}
+
+.-kloc-generic-icon {
+	-fx-font-family: "Material Icons";
+}

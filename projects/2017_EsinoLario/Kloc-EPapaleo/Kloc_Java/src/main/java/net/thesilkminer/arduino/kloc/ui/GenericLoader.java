@@ -33,12 +33,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * General purpose class used to load an FXML file.
@@ -58,10 +61,13 @@ import java.util.ResourceBundle;
  * @author TheSilkMiner
  * @since 1.0
  */
+@SuppressWarnings("unused")
+@ThreadSafe
 public final class GenericLoader {
 
-    private static final Map<Pair<String, Boolean>, GenericLoader> CACHE = Maps.newHashMap();
+    private static final Map<Pair<String, Boolean>, GenericLoader> CACHE = Maps.newConcurrentMap();
     private static final Logger LOGGER = LoggerFactory.getLogger(GenericLoader.class);
+    private static final Lock LOCK = new ReentrantLock();
 
     private final String fxmlName;
     private final URL fxmlUrl;
@@ -71,16 +77,21 @@ public final class GenericLoader {
     private Object controller;
 
     private GenericLoader(@Nonnull final String fxmlName, final boolean needsMaterialIcons) throws MalformedURLException {
-        this.fxmlName = fxmlName;
-        this.needsMaterialIcons = needsMaterialIcons;
-        //noinspection SpellCheckingInspection
-        this.fxmlUrl = this.getClass().getResource("/assets/kloc/fxml/" + this.fxmlName);
+        LOCK.lock();
+        try {
+            this.fxmlName = fxmlName;
+            this.needsMaterialIcons = needsMaterialIcons;
+            //noinspection SpellCheckingInspection
+            this.fxmlUrl = this.getClass().getResource("/assets/kloc/fxml/" + this.fxmlName);
 
-        LOGGER.info("Constructed new loader pointing to '{}'", this.fxmlUrl.toString());
-        LOGGER.trace("Given name: {}; should resolve MDI? {}", fxmlName, needsMaterialIcons);
+            LOGGER.info("Constructed new loader pointing to '{}'", this.fxmlUrl.toString());
+            LOGGER.trace("Given name: {}; should resolve MDI? {}", fxmlName, needsMaterialIcons);
 
-        this.node = null;
-        this.controller = null;
+            this.node = null;
+            this.controller = null;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /**
@@ -128,11 +139,16 @@ public final class GenericLoader {
     @Nonnull
     public static GenericLoader of(@Nonnull final String fxmlName, final boolean materialIcons) throws MalformedURLException {
         Preconditions.checkNotNull(fxmlName);
-        final Pair<String, Boolean> key = ImmutablePair.of(fxmlName, materialIcons);
-        if (CACHE.get(key) != null) return CACHE.get(key);
-        final GenericLoader value = new GenericLoader(fxmlName, materialIcons);
-        CACHE.put(key, value);
-        return value;
+        LOCK.lock();
+        try {
+            final Pair<String, Boolean> key = ImmutablePair.of(fxmlName, materialIcons);
+            if (CACHE.get(key) != null) return CACHE.get(key);
+            final GenericLoader value = new GenericLoader(fxmlName, materialIcons);
+            CACHE.put(key, value);
+            return value;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /**
@@ -176,6 +192,7 @@ public final class GenericLoader {
      * @since 1.0
      */
     @Nonnull
+    @SuppressWarnings("WeakerAccess")
     public static GenericLoader ofUnchecked(@Nonnull final String fxmlName, final boolean materialIcons) {
         try {
             return of(fxmlName, materialIcons);
@@ -194,7 +211,12 @@ public final class GenericLoader {
     @Contract(pure = true)
     @Nonnull
     protected String getFxmlName() {
-        return this.fxmlName;
+        LOCK.lock();
+        try {
+            return this.fxmlName;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /**
@@ -206,7 +228,12 @@ public final class GenericLoader {
      */
     @Contract(pure = true)
     protected boolean needsMaterialIcons() {
-        return this.needsMaterialIcons;
+        LOCK.lock();
+        try {
+            return this.needsMaterialIcons;
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /**
@@ -230,8 +257,13 @@ public final class GenericLoader {
     @Nonnull
     @SuppressWarnings("unchecked")
     public final <T> T getContainer() throws IOException {
-        if (this.node == null) this.load0();
-        return Preconditions.checkNotNull((T) this.node); // An FXML without main container? THROW immediately!
+        LOCK.lock();
+        try {
+            if (this.node == null) this.load0();
+            return Preconditions.checkNotNull((T) this.node); // An FXML without main container? THROW immediately!
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     /**
@@ -258,24 +290,34 @@ public final class GenericLoader {
     @Nonnull
     @SuppressWarnings("unchecked")
     public final <C> Optional<C> getController() throws IOException {
-        if (this.node == null && this.controller == null) this.load0();
-        return Optional.ofNullable((C) this.controller);
+        LOCK.lock();
+        try {
+            if (this.node == null && this.controller == null) this.load0();
+            return Optional.ofNullable((C) this.controller);
+        } finally {
+            LOCK.unlock();
+        }
     }
 
     private void load0() throws IOException {
-        LOGGER.info("Loading FXML file '{}'", this.fxmlName);
-        final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(this.fxmlUrl);
-        if (this.needsMaterialIcons) {
-            //noinspection SpellCheckingInspection
-            loader.setResources(ResourceBundle.getBundle("assets.kloc.fonts.Material Icons.Material_Icons"));
-            LOGGER.trace("Allow MDI resolution");
+        LOCK.lock();
+        try {
+            LOGGER.info("Loading FXML file '{}'", this.fxmlName);
+            final FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(this.fxmlUrl);
+            if (this.needsMaterialIcons) {
+                //noinspection SpellCheckingInspection
+                loader.setResources(ResourceBundle.getBundle("assets.kloc.fonts.Material Icons.Material_Icons"));
+                LOGGER.trace("Allow MDI resolution");
+            }
+            final Object container = loader.load();
+            if (container instanceof Pane) ((Pane) container).setBackground(Background.EMPTY);
+            this.node = container;
+            this.controller = loader.getController();
+            LOGGER.debug("Obtained node: {} ({}); obtained controller: {} ({})", container, container.getClass().getCanonicalName(),
+                    this.controller, this.controller == null? null : this.controller.getClass().getCanonicalName());
+        } finally {
+            LOCK.unlock();
         }
-        final Object container = loader.load();
-        if (container instanceof Pane) ((Pane) container).setBackground(Background.EMPTY);
-        this.node = container;
-        this.controller = loader.getController();
-        LOGGER.debug("Obtained node: {} ({}); obtained controller: {} ({})", container, container.getClass().getCanonicalName(),
-                this.controller, this.controller == null? null : this.controller.getClass().getCanonicalName());
     }
 }
